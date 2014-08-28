@@ -1,0 +1,13 @@
+package com.fancyhands.sdk.echo;
+
+/**
+ * Hello world!
+ *
+ */
+public class SDK
+{
+    public static void main( String[] args )
+    {
+        System.out.println( "Hello World!" );
+    }
+}
