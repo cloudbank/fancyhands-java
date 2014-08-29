@@ -46,7 +46,7 @@ public class EchoTest
         Echo echo = new Echo("PuREN1kznQ4UyWI", "dzvNP3hg0idkb0x");
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("Hello", "World"));
-        params.add(new BasicNameValuePair("Goodbuye", "World"));
+        params.add(new BasicNameValuePair("Goodbye", "World"));
         echo.setSync();
         echo.get(params, new FancyHandsClient.FancyRequestListener() {
             @Override
@@ -62,7 +62,7 @@ public class EchoTest
         Echo echo = new Echo("PuREN1kznQ4UyWI", "dzvNP3hg0idkb0x");
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("Hello", "World"));
-        params.add(new BasicNameValuePair("Goodbuye", "World"));
+        params.add(new BasicNameValuePair("Goodbye", "World"));
         echo.setSync();
         echo.post(params, new FancyHandsClient.FancyRequestListener() {
             @Override

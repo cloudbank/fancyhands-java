@@ -7,13 +7,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.NameValuePair;
-
 
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
@@ -80,7 +77,10 @@ public class FancyHandsClient    {
     }
 
     protected void get(String piece, List<NameValuePair> params, FancyRequestListener l) {
-        String url = this.getUrl(piece) + "?" + URLEncodedUtils.format(params, "utf-8");
+        String url = this.getUrl(piece);
+        if(params != null) {
+            url += "?" + URLEncodedUtils.format(params, "utf-8");
+        }
 
         RequestHandler handles = new RequestHandler("GET", url, null);
         handles.setKeyAndSecret(API_KEY, API_SECRET);
@@ -132,7 +132,7 @@ public class FancyHandsClient    {
                 request.setRequestMethod(this.method);
                 request.setDoInput(true);
 
-                System.out.println("method: " + method);
+                // System.out.println(method + " TO " + url.toString());
                 try {
                     if("POST".equals(method)) {
                         String body = URLEncodedUtils.format(params, "utf-8");
@@ -148,7 +148,7 @@ public class FancyHandsClient    {
                         request.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
                         OutputStream os = request.getOutputStream();
                         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "utf-8"));
-                        System.out.println(body);
+
                         writer.write(body);
                         writer.flush();
                         writer.close();
