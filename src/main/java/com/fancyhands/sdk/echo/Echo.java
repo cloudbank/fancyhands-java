@@ -18,6 +18,10 @@ public class Echo extends FancyHandsClient  {
     }
 
 	public void get(List<NameValuePair> params, FancyRequestListener listener) {
+        super.get("echo", params, listener);
+    }
+
+    public void post(List<NameValuePair> params, FancyRequestListener listener) {
         super.post("echo", params, listener);
     }
 }

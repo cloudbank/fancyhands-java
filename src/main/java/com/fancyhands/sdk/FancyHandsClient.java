@@ -7,17 +7,19 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.NameValuePair;
 
 
-
+import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
+import oauth.signpost.http.HttpParameters;
 
 import org.json.JSONObject;
 
@@ -26,7 +28,7 @@ import org.json.JSONObject;
  * Created by troden on 8/21/14.
  */
 public class FancyHandsClient    {
-    private String API_BASE = "http://192.168.1.10:8080/api/v1/";
+    private String API_BASE = "http://192.168.1.11:8080/api/v1/";
 
     protected String API_KEY = null;
     protected String API_SECRET = null;
@@ -79,6 +81,7 @@ public class FancyHandsClient    {
 
     protected void get(String piece, List<NameValuePair> params, FancyRequestListener l) {
         String url = this.getUrl(piece) + "?" + URLEncodedUtils.format(params, "utf-8");
+
         RequestHandler handles = new RequestHandler("GET", url, null);
         handles.setKeyAndSecret(API_KEY, API_SECRET);
         handles.setListener(l);
@@ -94,6 +97,96 @@ public class FancyHandsClient    {
             }
         }
     }
+
+    private static class RequestHandler extends Thread  {
+        private String url;
+        private String key = null;
+        private String secret = null;
+        private List<NameValuePair> params;
+        private FancyRequestListener listener;
+        private String method;
+        RequestHandler(String _method, String _url, List<NameValuePair> _params) {
+            method = _method;
+            url = _url;
+            params = _params;
+        }
+
+        public void setListener(FancyRequestListener l) {
+            listener = l;
+        }
+
+        public void setKeyAndSecret(String k, String s) {
+            key = k;
+            secret = s;
+        }
+
+        public void run() {
+            assert key != null;
+            assert secret != null;
+            try {
+                OAuthConsumer consumer = new DefaultOAuthConsumer(this.key, this.secret);
+                URL url = new URL(this.url);
+                StringBuilder returner = new StringBuilder();
+                HttpURLConnection request = (HttpURLConnection) url.openConnection();
+
+                request.setRequestMethod(this.method);
+                request.setDoInput(true);
+
+                System.out.println("method: " + method);
+                try {
+                    if("POST".equals(method)) {
+                        String body = URLEncodedUtils.format(params, "utf-8");
+                        HttpParameters doubledParams = new HttpParameters();
+                        for(NameValuePair p : params) {
+                            doubledParams.put(p.getName(), OAuth.percentEncode(p.getValue()));
+                        }
+
+                        consumer.setAdditionalParameters(doubledParams);
+                        consumer.sign(request);
+
+                        request.setDoOutput(true);
+                        request.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+                        OutputStream os = request.getOutputStream();
+                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "utf-8"));
+                        System.out.println(body);
+                        writer.write(body);
+                        writer.flush();
+                        writer.close();
+                        os.close();
+
+                        BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
+                        String line = "";
+                        while ((line = br.readLine()) != null) {
+                            returner.append(line);
+                        }
+                    }
+                    else {
+                        // we're a get request, just sign it
+                        consumer.sign(request);
+
+                        BufferedReader in = new BufferedReader(new InputStreamReader(request.getInputStream()));
+                        String line;
+                        while ((line = in.readLine()) != null) {
+                            returner.append(line);
+                        }
+
+                    }
+
+                    listener.onComplete(new JSONObject(returner.toString()));
+                } catch (Exception e) {
+                    // FIXME: return an error
+                    e.printStackTrace();
+                }
+
+            } catch (Exception e) {
+                // FIXME: return an error
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
 /*
     protected void post(String piece, List<NameValuePair> params, FancyRequestListener l) {
         String url = this.getUrl(piece); //  + "?" + URLEncodedUtils.format(params, "utf-8");
@@ -156,74 +249,5 @@ public class FancyHandsClient    {
     }
 
     */
-    private static class RequestHandler extends Thread  {
-        private String url;
-        private String key = null;
-        private String secret = null;
-        private List<NameValuePair> params;
-        private FancyRequestListener listener;
-        private String method;
-        RequestHandler(String _method, String _url, List<NameValuePair> _params) {
-            method = _method;
-            url = _url;
-            params = _params;
-        }
-
-        public void setListener(FancyRequestListener l) {
-            listener = l;
-        }
-
-        public void setKeyAndSecret(String k, String s) {
-            key = k;
-            secret = s;
-        }
-
-        public void run() {
-            assert key != null;
-            assert secret != null;
-            try {
-                OAuthConsumer consumer = new DefaultOAuthConsumer(this.key, this.secret);
-                URL url = new URL(this.url);
-                HttpURLConnection request = (HttpURLConnection) url.openConnection();
-
-                request.setRequestMethod(this.method);
-                request.setDoInput(true);
-                // sign the request
-                consumer.sign(request);
-
-                try {
-                    if("POST".equals(method)) {
-                        request.setDoOutput(true);
-                        OutputStream os = request.getOutputStream();
-                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "utf-8"));
-                        System.out.println(params);
-                        writer.write(URLEncodedUtils.format(params, "utf-8"));
-                        writer.flush();
-                        writer.close();
-                        os.close();
-                    }
-
-
-
-                    BufferedReader in = new BufferedReader(new InputStreamReader(request.getInputStream()));
-                    String line;
-                    StringBuilder sb = new StringBuilder();
-                    while ((line = in.readLine()) != null) {
-                        sb.append(line);
-                    }
-                    listener.onComplete(new JSONObject(sb.toString()));
-                } catch (Exception e) {
-                    // FIXME: return an error
-                    e.printStackTrace();
-                }
-
-            } catch (Exception e) {
-                // FIXME: return an error
-                e.printStackTrace();
-            }
-        }
-    }
-
-
 
 }

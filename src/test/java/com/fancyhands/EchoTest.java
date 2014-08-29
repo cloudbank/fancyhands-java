@@ -26,8 +26,7 @@ public class EchoTest
      *
      * @param testName name of the test case
      */
-    public EchoTest( String testName )
-    {
+    public EchoTest( String testName ) {
         super( testName );
     }
 
@@ -43,7 +42,7 @@ public class EchoTest
     /**
      * Rigourous Test :-)
      */
-    public void testEcho() {
+    public void testEchoGET() {
         Echo echo = new Echo("PuREN1kznQ4UyWI", "dzvNP3hg0idkb0x");
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("Hello", "World"));
@@ -52,9 +51,26 @@ public class EchoTest
         echo.get(params, new FancyHandsClient.FancyRequestListener() {
             @Override
             public void onComplete(JSONObject result) {
-                System.out.println("onComplete");
-                System.out.print(result.toString());
+                System.out.println("GETed");
+                System.out.println(result.toString());
             }
         });
     }
+
+
+    public void testEchoPOST() {
+        Echo echo = new Echo("PuREN1kznQ4UyWI", "dzvNP3hg0idkb0x");
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("Hello", "World"));
+        params.add(new BasicNameValuePair("Goodbuye", "World"));
+        echo.setSync();
+        echo.post(params, new FancyHandsClient.FancyRequestListener() {
+            @Override
+            public void onComplete(JSONObject result) {
+                System.out.println("POSTed");
+                System.out.println(result.toString());
+            }
+        });
+    }
+
 }
