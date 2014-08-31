@@ -25,7 +25,7 @@ import org.json.JSONObject;
  * Created by troden on 8/21/14.
  */
 public class FancyHandsClient    {
-    private String API_BASE = "http://192.168.1.11:8080/api/v1/";
+    private String API_BASE = "http://localhost:8080/api/v1/";
 
     protected String API_KEY = null;
     protected String API_SECRET = null;
