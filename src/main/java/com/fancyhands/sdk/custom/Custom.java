@@ -13,7 +13,7 @@ import java.util.TimeZone;
 
 
 public class Custom extends FancyHandsClient  {
-
+    static private String PIECE = "request/custom";
     public Custom(String api_key, String api_secret) {
         super(api_key, api_secret);
     }
@@ -21,11 +21,11 @@ public class Custom extends FancyHandsClient  {
     public void get(FancyRequestListener listener, String key) {
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("key", key));
-        super.get("request/custom", params, listener);
+        super.get(Custom.PIECE, params, listener);
     }
 
     public void get(FancyRequestListener listener) {
-        super.get("request/custom", null, listener);
+        super.get(Custom.PIECE, null, listener);
     }
 
     // Create a request, if you don't provide an expiration time, we'll set it to 24 hours from now.
@@ -44,7 +44,7 @@ public class Custom extends FancyHandsClient  {
         params.add(new BasicNameValuePair("custom_fields", fields.toString()));
         params.add(new BasicNameValuePair("bid", String.valueOf(bid)));
         params.add(new BasicNameValuePair("expiration_date", ds));
-        super.post("request/custom", params, listener);
+        super.post(Custom.PIECE, params, listener);
     }
 
 }

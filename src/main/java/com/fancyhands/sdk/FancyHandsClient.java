@@ -25,7 +25,8 @@ import org.json.JSONObject;
  * Created by troden on 8/21/14.
  */
 public class FancyHandsClient    {
-    private String API_BASE = "https://www.fancyhands.com/api/v1/";
+    // private String API_BASE = "https://www.fancyhands.com/api/v1/";
+    private String API_BASE = "http://localhost:8080/api/v1/";
 
     protected String API_KEY = null;
     protected String API_SECRET = null;
@@ -40,7 +41,6 @@ public class FancyHandsClient    {
     public interface FancyRequestListener {
         public void onComplete(JSONObject result);
     }
-
 
     public FancyHandsClient(String api_key, String api_secret) {
         this.API_KEY = api_key;

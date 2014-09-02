@@ -2,6 +2,7 @@ package com.fancyhands;
 
 import com.fancyhands.sdk.FancyHandsClient;
 import com.fancyhands.sdk.echo.Echo;
+import com.fancyhands.sdk.standard.Message;
 import com.fancyhands.sdk.standard.Standard;
 
 import junit.framework.Test;
@@ -84,8 +85,22 @@ public class StandardTest
             public void onComplete(JSONObject result) {
                 System.out.println("GOT THE NEWLY CREATED REQUEST");
                 System.out.println(result.toString());
+                StandardTest.createMessage(result.getString("key"));
             }
         }, key);
+    }
+
+    public static void createMessage(String key) {
+        // ok, we got it
+        Message s = new Message(StandardTest.API_KEY, StandardTest.API_SECRET);
+        s.setSync();
+        s.create(new FancyHandsClient.FancyRequestListener() {
+            @Override
+            public void onComplete(JSONObject result) {
+                System.out.println("Added the message!");
+                System.out.println(result.toString());
+            }
+        }, key, "This is a message created with the Java wrapper");
     }
 
 }

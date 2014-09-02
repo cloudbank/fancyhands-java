@@ -21,6 +21,10 @@ import java.util.List;
 public class EchoTest
     extends TestCase
 {
+
+    public static final String API_KEY = "PuREN1kznQ4UyWI";
+    public static final String API_SECRET = "dzvNP3hg0idkb0x";
+
     /**
      * Create the test case
      *
@@ -43,7 +47,7 @@ public class EchoTest
      * Rigourous Test :-)
      */
     public void testEchoGET() {
-        Echo echo = new Echo("PuREN1kznQ4UyWI", "dzvNP3hg0idkb0x");
+        Echo echo = new Echo(EchoTest.API_KEY, EchoTest.API_SECRET);
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("Hello", "World"));
         params.add(new BasicNameValuePair("Goodbye", "World"));
@@ -59,7 +63,7 @@ public class EchoTest
 
 
     public void testEchoPOST() {
-        Echo echo = new Echo("PuREN1kznQ4UyWI", "dzvNP3hg0idkb0x");
+        Echo echo = new Echo(EchoTest.API_KEY, EchoTest.API_SECRET);
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("Hello", "World"));
         params.add(new BasicNameValuePair("Goodbye", "World"));
