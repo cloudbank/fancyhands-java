@@ -11,10 +11,6 @@ import java.util.List;
 import java.util.TimeZone;
 
 
-/**
- * Hello world!
- *
- */
 public class Message extends FancyHandsClient  {
 
     private static String PIECE = "request/standard/messages";
