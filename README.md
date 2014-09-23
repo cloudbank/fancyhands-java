@@ -35,7 +35,7 @@ This could should work on Android, *but doesn't require any android libraries*. 
 
 Write your code:
 
-```
+```java
         Standard standard = new Standard(API_KEY, API_SECRET);
         standard.setSync();
         standard.get(new FancyHandsClient.FancyRequestListener() {
